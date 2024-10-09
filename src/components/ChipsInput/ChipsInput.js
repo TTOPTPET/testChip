@@ -7,7 +7,10 @@ function ChipsInput({value, onChange}) {
   const [validationError, setValidationError] = useState("");
   const [isQuoteOpen, setIsQuoteOpen] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
+  const [selectedChips, setSelectedChips] = useState([]); // Для выделенных чипсов
+  const [isSelecting, setIsSelecting] = useState(false); // Флаг для состояния выделения
   const editableRef = useRef(null);
+  const wrapperRef = useRef(null);
 
   function splitByCommasOutsideQuotes(string) {
     const regex = /,(?=(?:[^"]*"[^"]*")*[^"]*$)/;
@@ -22,11 +25,6 @@ function ChipsInput({value, onChange}) {
   useEffect(() => {
     setChips(splitByCommasOutsideQuotes(value));
   }, [value]);
-
-  function removeChip(chipToRemove) {
-    const newChips = chips.filter((chip) => chip !== chipToRemove);
-    onChange(newChips.join(', ') );
-  }
 
   const addChip = (text) => {
     if (text.trim()) {
@@ -117,12 +115,65 @@ function ChipsInput({value, onChange}) {
     onChange(newChips.join(', '));
   };
 
+  const handleMouseDown = (index) => {
+    setIsSelecting(true); 
+    if (!selectedChips.includes(index)) {
+      setSelectedChips([index]); // Начинаем выделение с одного чипса
+    }
+  };
+
+  // Продолжаем выделение при перемещении мыши
+  const handleMouseMove = (index) => {
+    if (isSelecting) {
+      setSelectedChips((prevSelected) => {
+        if (!prevSelected.includes(index)) {
+          return [...prevSelected, index]; // Добавляем чипс в выделенные
+        }
+        return prevSelected;
+      });
+    }
+  };
+
+  // Завершаем выделение при отпускании ЛКМ
+  const handleMouseUp = () => {
+    setIsSelecting(false); // Останавливаем выделение
+  };
+
+  // Удаляем выделенные чипсы
+  const handleDelete = () => {
+    const newChips = chips.filter((_, index) => !selectedChips.includes(index)); // Удаляем выделенные чипсы
+    setChips(newChips);
+    onChange(newChips.join(', '));
+    setSelectedChips([]); // Очищаем выделение
+  };
+
+  // Обработка нажатия клавиши Delete
+  const handleKeyDeleteDown = (e) => {
+    if ((e.key === 'Backspace' || e.key === 'Delete') && selectedChips.length > 0 && text === "") {
+      handleDelete();
+    } else if ((e.key === 'Backspace' || e.key === 'Delete') && chips.length > 0 && text === "") {
+      const newChips = chips.slice(0, -1);
+      setChips(newChips);
+      onChange(newChips.join(', '));
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDeleteDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDeleteDown);
+    };
+  }, [selectedChips, chips, text]);
+
   return (
-    <div className="input_wrapper">
+    <div className="input_wrapper" ref={wrapperRef} onMouseUp={handleMouseUp}>
       <div className="input_container">
         <ul className="input_chips">
           {chips.map((chip, index) => (
-            <li key={chip} className="input_chips_item">
+            <li key={index}
+            className={`input_chips_item ${selectedChips.includes(index) ? 'input_chips_item__selected' : ''}`}
+            onMouseDown={() => handleMouseDown(index)}
+            onMouseMove={() => handleMouseMove(index)}>
               {editingIndex === index ? (
                 <span
                   ref={editableRef}
@@ -136,7 +187,7 @@ function ChipsInput({value, onChange}) {
               ) : (
                 <span onClick={() => handleEditChip(index)}>{chip}</span>
               )}
-              <DeleteIcon onClick={() => removeChip(chip)} tabIndex="0" className="input_chips_item__icon"/>
+              <DeleteIcon onClick={() => handleDelete(chip)} tabIndex="0" className="input_chips_item__icon"/>
             </li>
           ))}
         </ul>

@@ -57,6 +57,7 @@ label {
 
 .input_chips_item {
   background-color: #cfe1ff;
+  border: 3px solid rgba(0,0,0,0);
   display: flex;
   align-items: center;
   padding: 10px;
@@ -64,6 +65,12 @@ label {
   border-radius: 10px;
   max-width: 480px;
   position: relative;
+  transition: all .3s;
+}
+
+.input_chips_item__selected {
+  background-color: #93baff;
+  border: 3px solid #2173ff;
 }
 
 .input_chips_item span {
