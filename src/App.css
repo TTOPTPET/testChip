@@ -1,38 +1,109 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+html {
+  box-sizing: border-box;
+  font-size: 62.5%;
+}
+
+body {
+  font-size: 1.6rem;
+}
+
 .App {
+  font-family: sans-serif;
+  width: 100%;
+  max-width: 50rem;
+  margin: 0 auto;
+}
+
+.App h1 {
+  margin-bottom: 2rem;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+label {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.input_wrapper {
+  margin-top: 40px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.input_container {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  row-gap: 1rem;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  background-color: #ebebeb;
+  border-radius: 0.5rem;
+  padding: 1rem;
 }
 
-.App-link {
-  color: #61dafb;
+.input_chips {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  row-gap: 10px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.input_chips_item {
+  background-color: #cfe1ff;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  padding-right: 35px;
+  border-radius: 10px;
+  max-width: 480px;
+  position: relative;
+}
+
+.input_chips_item span {
+  color: #013380;
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.input_chips_item__editable {
+  outline: none;
+}
+
+.input_chips_item__icon {
+  width: 20px;
+  height: 20px;
+  fill: #3270d1;
+  cursor: pointer;
+  transition: fill 0.2s;
+  position: absolute;
+  right: 10px;
+  outline: none;
+}
+
+.input_chips_item__icon:hover {
+  fill: #2857a3;
+  transition: all 0.2s;
+}
+
+input {
+  margin: 10px;
+  min-width: 200px;
+  font-size: 15px;
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+.error_message {
+  margin-top: 10px;
+  color: red;
 }
